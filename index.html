@@ -1,384 +1,273 @@
 <!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-<title>生命の樹 — Advanced</title>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>🌳 生命の樹 — Root Dominion v2</title>
 <style>
-:root{
-  --bg1:#0b1b17; --bg2:#0b1020; --panel:#0e1d2a; --ink:#e7f2ec; --mut:#9fb6c5; --hi:#7dd3fc; --ok:#22c55e; --ng:#ef4444;
-}
+:root{ --cell:84px }
 *{box-sizing:border-box}
-body{margin:0;background:
-  radial-gradient(1000px 600px at 0% -10%, rgba(125,211,252,.07), transparent 60%),
-  radial-gradient(1000px 600px at 100% 110%, rgba(34,197,94,.08), transparent 60%),
-  linear-gradient(180deg,var(--bg1),var(--bg2));
-color:var(--ink);font:16px/1.6 system-ui,"Noto Sans JP",-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
-.wrap{max-width:980px;margin:0 auto;padding:12px}
-header{position:sticky;top:0;background:rgba(7,16,23,.8);backdrop-filter:blur(6px);border-bottom:1px solid #163a3a;z-index:5}
-h1{margin:8px 0 6px;font-size:18px;color:#d1fae5}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{border:1px solid #1c3a36;border-radius:999px;padding:4px 10px;color:#cfe7db;font-size:12px;white-space:nowrap}
-.btn{padding:10px 12px;border-radius:12px;border:1px solid #1c3a36;background:#0b2721;color:var(--ink);cursor:pointer}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.card{background:rgba(7,16,23,.85);border:1px solid #143041;border-radius:14px;padding:12px;box-shadow:0 10px 26px rgba(0,0,0,.25)}
-.small{font-size:12px;color:var(--mut)}
-.grid{display:grid;gap:6px}
-.board{--n:7;grid-template-columns:repeat(var(--n),1fr)}
-.cell{height:64px;border:1px solid #1a3a36;border-radius:10px;background:#0a1a18;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;transition:transform .12s ease}
-.cell.sun{background:#14210b;border-color:#324e1e}
-.cell.water{background:#0a1b28;border-color:#163047}
-.cell.mark{outline:2px dashed #86efac;cursor:pointer}
-.cell.mine{box-shadow:inset 0 0 0 2px rgba(34,197,94,.35)}
-.cell.opp{box-shadow:inset 0 0 0 2px rgba(239,68,68,.35)}
-.cell .tag{position:absolute;left:6px;top:4px;font-size:12px;color:#93e2cf}
-.cell .tagR{position:absolute;right:6px;bottom:4px;font-size:12px;color:#93c5fd}
-.panel{display:grid;grid-template-columns:1fr;gap:8px}
-.choices{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.choice{min-width:140px;text-align:center;border:1px solid #1c3a36;border-radius:12px;background:#0b2721;padding:8px;position:relative}
-.choice .cost{position:absolute;right:6px;top:6px;border:1px solid #1c3a36;border-radius:999px;padding:2px 6px;font-size:12px;background:#0a1c17}
-.choice.dis{opacity:.45}
-.hint{font-size:12px;color:#bfe7db;text-align:center}
-.log{max-height:170px;overflow:auto;background:#041413;border:1px solid #1b3d34;border-radius:10px;padding:8px;font-family:ui-monospace,Menlo,Consolas,monospace}
-.sep{border:none;border-top:1px dashed #1b3d34;margin:10px 0}
-/* overlay */
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:20}
-#overlay .box{background:#0b1b18;border:1px solid #1e3a34;border-radius:14px;padding:18px;max-width:720px;box-shadow:0 18px 36px rgba(0,0,0,.4)}
-#overlay h2{margin:0 0 6px}
-.rowbtn{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
-/* toast */
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#0b1320;border:1px solid #1b3d5a;color:#e7f2ec;padding:8px 12px;border-radius:10px;opacity:0;transition:opacity .2s, transform .35s;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(-10px)}
+body{margin:0;background:radial-gradient(800px 500px at 50% -10%,rgba(52,211,153,.10),transparent 60%),linear-gradient(180deg,#081b16,#0e1f28);color:#e9fff6;font:16px/1.6 system-ui,"Noto Sans JP",sans-serif}
+h1{font-size:18px;margin:10px 6px;text-align:center;text-shadow:0 0 14px rgba(16,185,129,.35)}
+.header{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;padding:8px}
+.pill{border:1px solid #1f473f;border-radius:999px;padding:4px 10px;background:#0b2823;font-size:12px}
+.btn{padding:9px 12px;border-radius:10px;border:1px solid #1f473f;background:#11443b;color:#e9fff6;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+input[type=range]{width:150px}
+.wrap{max-width:620px;margin:0 auto;padding:10px}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.cell{width:var(--cell);height:var(--cell);border:1px solid #1f473f;border-radius:12px;background:linear-gradient(180deg,#0f3a32,#0b2b25);display:flex;align-items:center;justify-content:center;font-size:26px;position:relative}
+.src{position:absolute;left:6px;top:6px;font-size:16px}
+.you{box-shadow:inset 0 0 0 3px rgba(74,222,128,.6)}
+.ai{box-shadow:inset 0 0 0 3px rgba(192,132,252,.6)}
+.hl{outline:2px solid #60a5fa}
+.small{font-size:12px;color:#bbf7d0;max-height:160px;overflow:auto;text-align:left}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:#0b2823;border:1px solid #1f473f;color:#e5e7eb;padding:8px 12px;border-radius:10px;opacity:0;transition:opacity .2s, transform .35s;z-index:10}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>🌳 生命の樹 — Advanced（資源×進化×季節×AI）</h1>
-    <div class="row">
-      <span class="pill">あなた 生命力:<b id="sMe">0</b></span>
-      <span class="pill">AI 生命力:<b id="sAI">0</b></span>
-      <span class="pill">☀ 太陽:<b id="sun">2</b> 💧 水:<b id="water">2</b></span>
-      <span class="pill">季節:<b id="seasonT">春</b>（<span id="seasonInfo">葉:産出+1</span>）</span>
-      <button id="newMatch" class="btn">新しい対戦</button>
-      <button id="edit" class="btn">構成編集</button>
-      <button id="help" class="btn">遊び方</button>
-    </div>
-  </div>
-</header>
+<h1>🌳 生命の樹 — Root Dominion v2</h1>
+<div class="header">
+  <span class="pill">🧙 あなた点:<b id="pS">0</b></span>
+  <span class="pill">🤖 AI点:<b id="aS">0</b></span>
+  <span class="pill">🔋 EP:<b id="ep">2</b></span>
+  <button id="end" class="btn">⏭️ ターン終了</button>
+  <button id="new" class="btn">🔁 リセット</button>
+  <button id="unlock" class="btn">🔓 強制解除</button>
+  <button id="z-" class="btn">−</button><input id="z" type="range" min="70" max="110" value="84"><button id="z+" class="btn">＋</button>
+</div>
 
-<main class="wrap grid panel">
-  <section class="card">
-    <div id="board" class="grid board" style="--n:7"></div>
-    <div class="hint">行動を選んでから、盤面のハイライトをタップ。資源が足りないと選べません。</div>
-    <hr class="sep"/>
-    <div id="choices" class="choices"></div>
-    <hr class="sep"/>
-    <div id="log" class="log"></div>
-  </section>
-</main>
-
-<div id="overlay">
-  <div class="box">
-    <h2 id="ovTitle">Overlay</h2>
-    <div id="ovBody"></div>
-    <div class="rowbtn">
-      <button id="ovOK" class="btn">OK</button>
-      <button id="ovCancel" class="btn">閉じる</button>
-    </div>
-  </div>
+<div class="wrap">
+  <div id="board" class="board"></div>
+  <div id="log" class="small"></div>
 </div>
 <div id="toast" class="toast">text</div>
 
 <script>
-// ===== Audio =====
-let AC, master;
-function initAudio(){ if(AC) return; AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.22; master.connect(AC.destination); }
-function sfx(kind='ui'){ if(!AC) return; const now=AC.currentTime, o=AC.createOscillator(), g=AC.createGain(); o.connect(g); g.connect(master);
-  o.type = kind==='place'?'sine': kind==='score'?'triangle':'square';
-  const f= kind==='place'? 520 : kind==='score'? 880 : 220;
-  o.frequency.setValueAtTime(f, now);
-  if(kind==='score') o.frequency.exponentialRampToValueAtTime(1320, now+.25);
-  g.gain.setValueAtTime(.001, now); g.gain.exponentialRampToValueAtTime(.4, now+.02); g.gain.exponentialRampToValueAtTime(.001, now+.28);
-  o.start(); o.stop(now+.3);
-}
-document.body.addEventListener('pointerdown', initAudio, {once:true});
+(function(){
+  "use strict";
+  const N=5;
+  const SRC_TYPES=['💧','🌞','⛰','🍄','🔥',null]; // null=空地
+  const COST_BASE=2;
+  const el=id=>document.getElementById(id);
+  const tip=t=>{const x=el('toast'); x.textContent=t; x.classList.add('show'); setTimeout(()=>x.classList.remove('show'),900);};
+  const log=m=>{const L=el('log'); L.innerHTML+=m+'<br>'; L.scrollTop=L.scrollHeight;};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-// ===== Game State =====
-const N=7;
-const board=[]; for(let r=0;r<N;r++){ board[r]=[]; for(let c=0;c<N;c++) board[r][c]=null; }
-const BASE_C = Math.floor(N/2); // trunk column
-let season=0; // 0春 1夏 2秋 3冬
-const SEASONS=['春','夏','秋','冬'];
-const SEASON_INFO=[ '葉:産出+1', '☀太陽+1/ターン', '果実:得点+2', '葉:産出0' ];
-let lifeMe=0, lifeAI=0, sun=2, water=2, turn=1, actor='me', lastBlocked=0;
+  let S;
 
-const sMe=document.getElementById('sMe'), sAI=document.getElementById('sAI'), elSun=document.getElementById('sun'), elWater=document.getElementById('water');
-const boardEl=document.getElementById('board'), choicesEl=document.getElementById('choices'), logEl=document.getElementById('log');
-const seasonT=document.getElementById('seasonT'), seasonInfo=document.getElementById('seasonInfo');
-document.getElementById('newMatch').onclick=()=>location.reload();
-document.getElementById('help').onclick=()=>showOverlay('遊び方', `<div class="small">
-<b>目的：</b>季節が巡る中で樹を育て、<b>生命力</b>を競う対戦ゲーム。<br>
-<b>資源：</b>太陽☀と水💧を消費してタイルを配置/進化。<br>
-<b>季節：</b>春(葉産出+1)、夏(☀+1/ターン)、秋(果実+2点)、冬(葉産出0)。<br>
-<b>行動：</b>幹/枝/葉/根の配置、葉→花、花→果実への進化、パス。<br>
-<b>接続：</b>幹は幹に、枝は幹か枝に、葉/花/果実は枝に、根は幹か根に接続。<br>
-<b>得点：</b>配置時に基礎点＋連結ボーナス（2=+2/3=+5/4=+8）。果実は秋ならさらに+2。<br>
-<b>産出：</b>ラウンド終了時、葉が☀+1（冬は0/春は+2）、根が💧+1、夏は☀+1が加算。</div>`);
-
-function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1200); }
-function showOverlay(title, inner){ const o=document.getElementById('overlay'); o.style.display='flex'; document.getElementById('ovTitle').textContent=title; document.getElementById('ovBody').innerHTML=inner;
-  document.getElementById('ovOK').onclick=()=>{ o.style.display='none'; }; document.getElementById('ovCancel').onclick=()=>{ o.style.display='none'; }; }
-
-// ===== Config / Loadout =====
-const DEFAULT_STOCK={ trunk:6, branch:10, leaf:10, root:8 };
-function loadStock(){ try{ const s=localStorage.getItem('tree_stock'); if(s) return JSON.parse(s); }catch{} return {...DEFAULT_STOCK}; }
-function saveStock(st){ try{ localStorage.setItem('tree_stock', JSON.stringify(st)); }catch{} }
-let stock=loadStock();
-
-document.getElementById('edit').onclick=()=>{
-  const st=loadStock();
-  let html='<div class="small">各タイルの在庫数（試合開始時）。変更は自動保存。</div><div class="rowbtn">';
-  for(const k of ['trunk','branch','leaf','root']){
-    html += `<div class="pill">${k}：<input id="in_${k}" type="number" min="0" max="20" value="${st[k]}" style="width:64px;background:#0b2721;border:1px solid #1c3a36;color:#e7f2ec;border-radius:6px;padding:4px 6px"></div>`;
+  function reset(){
+    // 盤生成：中央列は少し資源濃い
+    const grid=[...Array(N)].map(()=>[...Array(N)].map(()=>({owner:0,src:pick()})));
+    grid[2][0].src=null; grid[2][N-1].src=null; // 幹位置は空
+    S={
+      grid, turn:'you', ep:COST_BASE, p:{score:0, trunk:[2,0]}, a:{score:0, trunk:[2,N-1]},
+      busy:false
+    };
+    // 幹を設置
+    cell(2,0).owner=1; cell(2,N-1).owner=2;
+    renderAll();
+    el('log').innerHTML=''; log('▶️ 開始：あなたの番');
   }
-  html+='</div>';
-  showOverlay('構成編集', html);
-  ['trunk','branch','leaf','root'].forEach(k=>{
-    const el=document.getElementById('in_'+k);
-    el.addEventListener('change',()=>{ st[k]=Math.max(0, Math.min(20, Number(el.value)||0)); saveStock(st); stock=st; renderChoices(); });
-  });
-};
+  function pick(){
+    // 少し資源寄り
+    const r=Math.random();
+    if(r<0.18) return '💧';
+    if(r<0.33) return '🌞';
+    if(r<0.46) return '⛰';
+    if(r<0.59) return '🍄';
+    if(r<0.69) return '🔥';
+    return null;
+  }
+  const cell=(r,c)=>S.grid[r][c];
 
-// ===== Tiles / Rules =====
-function T(id,emoji,name,s,w,base){ return {id,emoji,name,s,w,base}; }
-const TILES={
-  trunk: T('trunk','🪵','幹',1,0,2),
-  branch: T('branch','🌿','枝',1,1,1),
-  leaf: T('leaf','🍃','葉',1,2,2),
-  flower: T('flower','🌸','花',2,1,0), // upgrade only
-  fruit: T('fruit','🍎','果実',2,2,4), // upgrade only
-  root: T('root','🪨','根',0,1,1),
-};
-function cellClass(r,c){ if(r===0) return 'sun'; if(r===N-1) return 'water'; return ''; }
-function neighbors(r,c){ return [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(([rr,cc])=>rr>=0&&cc>=0&&rr<N&&cc<N); }
-function owns(r,c,who){ return board[r][c] && board[r][c].owner===who; }
-function canPlace(who,t,r,c){
-  if(board[r][c]) return false;
-  if(t.id==='trunk'){
-    // trunk must connect to own trunk and preferably in center column
-    if(c!==BASE_C) return false;
-    // allow first trunk only at bottom center
-    const anyTrunk = findAll(who, x=>x.id==='trunk').length>0;
-    if(!anyTrunk) return r===N-2; // base above bottom water row
-    return neighbors(r,c).some(([rr,cc])=>owns(rr,cc,who)&&board[rr][cc].id==='trunk');
+  function neighbors([r,c]){
+    return [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(([y,x])=>y>=0&&y<N&&x>=0&&x<N);
   }
-  if(t.id==='branch'){
-    return neighbors(r,c).some(([rr,cc])=>owns(rr,cc,who)&&(board[rr][cc].id==='branch'||board[rr][cc].id==='trunk'));
+  function renderAll(){
+    el('pS').textContent=S.p.score; el('aS').textContent=S.a.score; el('ep').textContent=S.ep;
+    const B=el('board'); B.innerHTML='';
+    for(let r=0;r<N;r++){
+      for(let c=0;c<N;c++){
+        const d=document.createElement('div'); d.className='cell';
+        const cc=cell(r,c);
+        if(cc.owner===1) d.classList.add('you'); else if(cc.owner===2) d.classList.add('ai');
+        d.dataset.r=r; d.dataset.c=c;
+        d.innerHTML=`<div class="src">${cc.src?cc.src:''}</div>${cc.owner===1?'🟢':cc.owner===2?'🟣':''}`;
+        B.appendChild(d);
+      }
+    }
+    highlight();
   }
-  if(t.id==='leaf'){
-    return neighbors(r,c).some(([rr,cc])=>owns(rr,cc,who)&&board[rr][cc].id==='branch');
+  function highlight(){
+    document.querySelectorAll('.hl').forEach(n=>n.classList.remove('hl'));
+    if(S.turn!=='you') return;
+    const frontier = frontierCells(1);
+    frontier.forEach(([r,c])=>{
+      const d=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+      if(d) d.classList.add('hl');
+    });
   }
-  if(t.id==='root'){
-    return neighbors(r,c).some(([rr,cc])=>owns(rr,cc,who)&&(board[rr][cc].id==='root'||board[rr][cc].id==='trunk'));
+  function frontierCells(owner){
+    // 自分の根に隣接する空きマス
+    const f=[];
+    for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+      if(cell(r,c).owner===owner){
+        for(const nb of neighbors([r,c])){
+          const t=cell(...nb);
+          if(t.owner===0 && !includesCoord(f, nb)) f.push(nb);
+        }
+      }
+    }
+    return f;
   }
-  return false;
-}
-function canUpgrade(who,kind,r,c){
-  const v=board[r][c]; if(!v||v.owner!==who) return false;
-  if(kind==='leafToFlower') return v.id==='leaf';
-  if(kind==='flowerToFruit') return v.id==='flower';
-  return false;
-}
-function findAll(who, pred){ const out=[]; for(let r=0;r<N;r++) for(let c=0;c<N;c++){ const v=board[r][c]; if(v&&v.owner===who && (!pred||pred(v))) out.push({r,c,v}); } return out; }
+  function includesCoord(list,[r,c]){ return list.some(([y,x])=>y===r&&x===c); }
 
-// scoring
-function chainLen(r,c,id,who){ // linear up/down/left/right counts
-  let total=1;
-  for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){
-    let k=1; while(true){ const rr=r+dr*k, cc=c+dc*k; if(rr<0||cc<0||rr>=N||cc>=N) break; const v=board[rr][cc]; if(v&&v.owner===who&&v.id===id){ total++; k++; } else break; }
+  function grow(owner, to){
+    // コスト計算
+    let cost=COST_BASE;
+    const s = cell(...to).src;
+    if(s==='🌞') cost=Math.max(1,cost-1);
+    if(s==='💧') S.ep+=1;        // 即時ボーナス
+    if(s==='🔥') { if(owner===1) S.p.score=Math.max(0,S.p.score-1); else S.a.score=Math.max(0,S.a.score-1); } // 罰
+    if(S.ep<cost){ tip('EP不足'); return false; }
+    S.ep-=cost;
+    cell(...to).owner = owner;
+    if(s==='⛰'){ /*防御：今回は見た目のみ*/ }
+    // 連結3で果実⭐
+    const gained = checkFruit(owner);
+    if(gained>0){
+      if(owner===1) S.p.score+=3; else S.a.score+=3;
+      log(`${owner===1?'あなた':'AI'} ⭐ 果実 +3`);
+    }
+    // 菌糸：連結ボーナス
+    if(s==='🍄'){
+      const len = longestChain(owner);
+      if(owner===1) S.p.score += 1; else S.a.score += 1;
+      log(`${owner===1?'あなた':'AI'} 🍄 連結ボーナス +1（連結長=${len}）`);
+    }
+    return true;
   }
-  return total;
-}
-function scorePlace(who,t,r,c){
-  let s=t.base;
-  if(t.id==='trunk' && c===BASE_C) s+=1;
-  const ch=chainLen(r,c,t.id,who);
-  if(ch>=4) s+=8; else if(ch===3) s+=5; else if(ch===2) s+=2;
-  if(t.id==='leaf' && neighbors(r,c).some(([rr,cc])=>board[rr][cc]?.id==='root' && board[rr][cc].owner===who)) s+=1;
-  return s;
-}
-function scoreUpgrade(who,kind,r,c){
-  if(kind==='leafToFlower') return 1; // small prep bonus
-  if(kind==='flowerToFruit'){ return TILES.fruit.base + (season===2?2:0); } // autumn bonus
-  return 0;
-}
 
-// ===== UI Render =====
-function renderBoard(){
-  boardEl.innerHTML='';
-  for(let r=0;r<N;r++){
+  function checkFruit(owner){
+    // 直線3連結が生まれたか
+    let made=0;
+    // 横
+    for(let r=0;r<N;r++){
+      for(let c=0;c<=N-3;c++){
+        if(cell(r,c).owner===owner && cell(r,c+1).owner===owner && cell(r,c+2).owner===owner){
+          made++;
+        }
+      }
+    }
+    // 縦
     for(let c=0;c<N;c++){
-      const cell=document.createElement('div'); cell.className='cell '+cellClass(r,c);
-      const v=board[r][c];
-      if(v){
-        cell.innerHTML=v.emoji;
-        cell.classList.add(v.owner==='me'?'mine':'opp');
-        // tags
-        const tg=document.createElement('div'); tg.className='tag'; tg.textContent = v.id; cell.appendChild(tg);
+      for(let r=0;r<=N-3;r++){
+        if(cell(r,r?c:c).owner===owner && cell(r+1,c).owner===owner && cell(r+2,c).owner===owner){
+          made++;
+        }
       }
-      boardEl.appendChild(cell);
     }
+    return made;
   }
-  sMe.textContent=lifeMe; sAI.textContent=lifeAI; elSun.textContent=sun; elWater.textContent=water;
-  seasonT.textContent=SEASONS[season]; seasonInfo.textContent=SEASON_INFO[season];
-}
-function renderChoices(){
-  const acts=[
-    {id:'place_trunk', label:'🪵 幹', tile:TILES.trunk, s:TILES.trunk.s, w:TILES.trunk.w, stock:stock.trunk},
-    {id:'place_branch', label:'🌿 枝', tile:TILES.branch, s:TILES.branch.s, w:TILES.branch.w, stock:stock.branch},
-    {id:'place_leaf', label:'🍃 葉', tile:TILES.leaf, s:TILES.leaf.s, w:TILES.leaf.w, stock:stock.leaf},
-    {id:'place_root', label:'🪨 根', tile:TILES.root, s:TILES.root.s, w:TILES.root.w, stock:stock.root},
-    {id:'up_leaf_flower', label:'🌸 進化:葉→花', s:TILES.flower.s, w:TILES.flower.w},
-    {id:'up_flower_fruit', label:'🍎 進化:花→果実', s:TILES.fruit.s, w:TILES.fruit.w},
-    {id:'pass', label:'🔁 パス', s:0, w:0},
-  ];
-  choicesEl.innerHTML='';
-  acts.forEach(a=>{
-    const canRes = sun>=a.s && water>=a.w;
-    const d=document.createElement('div'); d.className='choice'+(canRes?'':' dis');
-    d.innerHTML=`<b>${a.label}</b><div class="cost">S${a.s}/W${a.w}</div><div class="small">${a.stock!=null?'在庫:'+a.stock:''}</div>`;
-    if(canRes) d.onclick=()=>selectAction(a);
-    choicesEl.appendChild(d);
+
+  function longestChain(owner){
+    // BFSで最大連結長
+    const seen=[...Array(N)].map(()=>Array(N).fill(false));
+    let best=0;
+    for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+      if(cell(r,c).owner!==owner || seen[r][c]) continue;
+      let q=[[r,c]]; seen[r][c]=true; let cnt=0;
+      while(q.length){ const [y,x]=q.shift(); cnt++;
+        for(const nb of neighbors([y,x])){
+          if(!seen[nb[0]][nb[1]] && cell(...nb).owner===owner){ seen[nb[0]][nb[1]]=true; q.push(nb); }
+        }
+      }
+      best=Math.max(best,cnt);
+    }
+    return best;
+  }
+
+  function endTurn(){
+    if(S.busy) return; S.busy=true;
+    try{
+      // 収穫：連結長を得点化（小さめ）
+      const add = Math.max(0, longestChain(1)-1);
+      if(add>0){ S.p.score+=add; log(`🌾 収穫：+${add}`); }
+      // 勝利判定
+      if(S.p.score>=20 || S.a.score>=20) return finish();
+      // AIへ
+      S.turn='ai'; S.ep=COST_BASE;
+      renderAll();
+      setTimeout(aiStep, 300);
+    } finally { /* busyはAI側でクリア */ }
+  }
+
+  function finish(){
+    const res = S.p.score>=20 && S.p.score>=S.a.score ? '勝利！' : '敗北…';
+    alert(`対戦終了：${res}\nあなた ${S.p.score} / AI ${S.a.score}`);
+    S.busy=false;
+  }
+
+  function aiStep(){
+    // EPを使い切るまで成長（最大3回）
+    let steps=0;
+    while(S.turn==='ai' && S.ep>0 && steps<6){
+      const cand = frontierCells(2);
+      if(cand.length===0) break;
+      // 評価：資源価値 + 自連結期待 − 相手妨害価値の一部
+      let best=null;
+      for(const pos of cand){
+        const score = evalMove(2,pos);
+        if(!best || score>best.sc) best={pos,sc:score};
+      }
+      if(!grow(2,best.pos)) break;
+      steps++;
+    }
+    // 収穫
+    const add = Math.max(0, longestChain(2)-1);
+    if(add>0){ S.a.score+=add; log(`🤖🌾 収穫：+${add}`); }
+    if(S.p.score>=20 || S.a.score>=20){ S.busy=false; return finish(); }
+    // プレイヤーへ
+    S.turn='you'; S.ep=COST_BASE; S.busy=false; renderAll(); log('🪵 あなたの番');
+  }
+
+  function evalMove(owner,pos){
+    const s = cell(...pos).src;
+    const resVal = (s==='💧'?1.2 : s==='🌞'?0.8 : s==='⛰'?0.6 : s==='🍄'?1.4 : s==='🔥'?-1.2 : 0.5);
+    // 長く繋がりそうな方向を好む（近傍に自根が多いほど+）
+    let near=0;
+    for(const nb of neighbors(pos)){ if(cell(...nb).owner===owner) near++; }
+    // 相手の前進ラインを塞ぐ（相手が隣接しているなら+）
+    let block=0;
+    for(const nb of neighbors(pos)){ if(cell(...nb).owner=== (owner===1?2:1)) block+=0.6; }
+    return resVal + near*0.8 + block*0.6;
+  }
+
+  // ===== UI =====
+  el('board').addEventListener('click',(e)=>{
+    if(S.busy || S.turn!=='you') return;
+    const d=e.target.closest('.cell'); if(!d) return;
+    const r=+d.dataset.r, c=+d.dataset.c;
+    // 自根に隣接＆空きか？
+    const fr=frontierCells(1).some(([y,x])=>y===r&&x===c);
+    if(!fr){ tip('そこには伸ばせません'); return; }
+    if(grow(1,[r,c])){ renderAll(); }
   });
-}
+  el('end').onclick=()=>endTurn();
+  el('new').onclick=()=>reset();
+  el('unlock').onclick=()=>{ S.busy=false; tip('🔓解除'); };
 
-let pendingAction=null;
-function markCells(pred, onClick){
-  [...boardEl.children].forEach((cell,i)=>{ const r=Math.floor(i/N), c=i%N; if(pred(r,c)){ cell.classList.add('mark'); cell.onclick=()=>{ clearMarks(); onClick(r,c); }; } });
-}
-function clearMarks(){ [...boardEl.children].forEach(cell=>{ cell.classList.remove('mark'); cell.onclick=null; }); }
+  // ズーム
+  const zr=el('z');
+  const apply=(v)=>{
+    const x=clamp(+v,70,110); zr.value=x; document.documentElement.style.setProperty('--cell',x+'px'); renderAll();
+  };
+  el('z-').onclick=()=>apply(zr.value-6);
+  el('z+').onclick=()=>apply(+zr.value+6);
+  zr.oninput=()=>apply(zr.value);
 
-function selectAction(a){
-  pendingAction=a;
-  clearMarks();
-  if(a.id.startsWith('place_')){
-    const t=a.tile;
-    markCells((r,c)=>canPlace('me',t,r,c), (r,c)=>{
-      sun-=t.s; water-=t.w; if(a.tile.id!=='flower'&&a.tile.id!=='fruit'){ // place actions only
-        if(a.tile.id==='trunk') stock.trunk--; if(a.tile.id==='branch') stock.branch--; if(a.tile.id==='leaf') stock.leaf--; if(a.tile.id==='root') stock.root--;
-      }
-      board[r][c]={...t, owner:'me'};
-      const add=scorePlace('me',t,r,c); lifeMe+=add; log(`あなた：${t.name} を配置（+${add}）`); sfx('place'); renderBoard();
-      endPlayer();
-    });
-    toast('配置位置をタップ');
-  }else if(a.id==='up_leaf_flower'){
-    markCells((r,c)=>canUpgrade('me','leafToFlower',r,c), (r,c)=>{
-      const t=TILES.flower; sun-=t.s; water-=t.w; board[r][c]={...t, owner:'me'}; const add=scoreUpgrade('me','leafToFlower',r,c); lifeMe+=add; log(`あなた：葉→花（+${add}）`); sfx('place'); renderBoard(); endPlayer();
-    });
-    toast('進化させる葉をタップ');
-  }else if(a.id==='up_flower_fruit'){
-    markCells((r,c)=>canUpgrade('me','flowerToFruit',r,c), (r,c)=>{
-      const t=TILES.fruit; sun-=t.s; water-=t.w; board[r][c]={...t, owner:'me'}; const add=scoreUpgrade('me','flowerToFruit',r,c); lifeMe+=add; log(`あなた：花→果実（+${add}）`); sfx('score'); renderBoard(); endPlayer();
-    });
-    toast('進化させる花をタップ');
-  }else if(a.id==='pass'){
-    log('あなた：パス'); endPlayer();
-  }
-}
-
-function log(m){ logEl.innerHTML+=m+'<br>'; logEl.scrollTop=logEl.scrollHeight; }
-
-// ===== Turn / Season / Production =====
-function production(){
-  let leaves=findAll('me',v=>v.id==='leaf').length + findAll('me',v=>v.id==='flower').length*0; // flowers do not produce
-  if(season===0) leaves*=2; // spring boost
-  if(season===3) leaves=0; // winter halt
-  let roots=findAll('me',v=>v.id==='root').length;
-  let ps = Math.round(leaves);
-  let pw = Math.round(roots);
-  if(season===1) ps+=1; // summer +1 sun
-  sun+=ps; water+=pw;
-  log(`産出：☀+${ps} 💧+${pw}`);
-}
-function aiProduction(){
-  // symmetric for AI, but implicit resources (we don't track AI resources separately—AI has virtual resources to keep pace)
-}
-function endRound(){
-  production();
-  // AI production is abstracted; could be balanced by adding +1 score if behind (omitted)
-  season=(season+1)%4;
-  turn++;
-  renderBoard(); renderChoices();
-}
-
-function endPlayer(){
-  clearMarks();
-  // AI move
-  aiMove();
-  endRound();
-  checkEnd();
-}
-
-function checkEnd(){
-  const filled = board.flat().every(v=>v);
-  if(turn>24 || filled){
-    let msg=`最終：あなた ${lifeMe} ／ AI ${lifeAI}`;
-    showOverlay(lifeMe>lifeAI?'勝利！':lifeMe<lifeAI?'敗北…':'引き分け', `<div class="rowbtn"><span class="pill">${msg}</span></div>`);
-  }
-}
-
-// ===== AI =====
-function aiMove(){
-  // Evaluate all affordable/valid moves: place trunk/branch/leaf/root, upgrade leaf->flower, flower->fruit
-  const cand=[];
-  function addPlace(t){
-    for(let r=0;r<N;r++)for(let c=0;c<N;c++){
-      if(canPlace('ai',t,r,c)){
-        const gain=scorePlace('ai',t,r,c) + blockScore(r,c,t);
-        cand.push({type:'place', t, r, c, score:gain});
-      }
-    }
-  }
-  function addUpgrade(kind){
-    for(let r=0;r<N;r++)for(let c=0;c<N;c++){
-      if(canUpgrade('ai',kind,r,c)){
-        const gain=scoreUpgrade('ai',kind,r,c);
-        cand.push({type:'up', kind, r, c, score:gain});
-      }
-    }
-  }
-  function blockScore(r,c,t){
-    // if this cell is good for player's future (near trunk lane or branch hub), add blocking incentive
-    let s=0;
-    if(t.id!=='root'){ if(c===BASE_C) s+=2; if(neighbors(r,c).some(([rr,cc])=>owns(rr,cc,'me'))) s+=1; }
-    // fruit in autumn increases priority
-    if(t.id==='leaf' && season===2) s+=1;
-    if(t.id==='trunk' && r<Math.floor(N/2)) s+=1.5; // higher trunk
-    return s;
-  }
-  // gather candidates
-  addPlace(TILES.trunk); addPlace(TILES.branch); addPlace(TILES.leaf); addPlace(TILES.root);
-  addUpgrade('leafToFlower'); addUpgrade('flowerToFruit');
-  if(cand.length===0){ log('AI：パス'); return; }
-  cand.sort((a,b)=>b.score-a.score);
-  const best=cand[0];
-  if(best.type==='place'){
-    board[best.r][best.c]={...best.t, owner:'ai'}; const add=scorePlace('ai',best.t,best.r,best.c); lifeAI+=add; log(`AI：${best.t.name} を配置（+${add}）`);
-  }else{
-    const t = best.kind==='leafToFlower'? TILES.flower : TILES.fruit;
-    board[best.r][best.c]={...t, owner:'ai'}; const add=scoreUpgrade('ai',best.kind,best.r,best.c); lifeAI+=add; log(`AI：進化（+${add}）`);
-  }
-  sfx('place'); renderBoard();
-}
-
-// ===== Boot =====
-function boot(){
-  // Place initial bases (optional): allow first trunk placements symmetrical?
-  renderBoard(); renderChoices(); log('ゲーム開始：行動を選んで盤面をタップ。');
-}
-boot();
+  window.onload=()=>{ apply(zr.value); reset(); };
+})();
 </script>
 </body>
 </html>
